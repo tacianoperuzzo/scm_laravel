@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+
+body {
+  @apply bg-[image:repeating-linear-gradient(315deg,_var(--pattern-fg)_0,_var(--pattern-fg)_1px,_transparent_0,_transparent_50%)] bg-[size:10px_10px] bg-fixed [--pattern-fg:var(--color-gray-950)]/5;
+}
+
+.menubar-root {
+  @apply bg-green-100/0!;
+  font-size: 0.9rem;
+}
+.p-menubar-item-active>.menubar-root {
+  @apply bg-green-900!;
+}
+.menubar-root:hover {
+  @apply bg-green-900!;
+}
+.menubar-root a>span, .menubar-root button>span {
+  @apply text-gray-300!;
+}
+.menubar-root a:hover>span, .menubar-root button:hover>span {
+  @apply text-gray-100!;
+}
+
+.menubar-submenu {
+  @apply bg-green-700! border-green-900!;
+}
+
