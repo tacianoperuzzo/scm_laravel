@@ -84,7 +84,7 @@ watch(() => oficioStore.oficio, (newOficio) => {
     <Dialog v-model:visible="_dialog.show" maximizable modal :header="_dialog.title" :class="'w-5/6'"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" @after-hide="closeDialog">
         <Panel :pt="{ root: 'pt-4', header: 'hidden!' }">
-            <Form :action="_oficio.id ? route('oficio.update', { id: _oficio.id }) : route('oficio.store')"
+            <Form :action="_oficio.id ? route('oficios.update', { id: _oficio.id }) : route('oficios.store')"
                 #default="{ errors }" :method="_oficio.id ? 'PUT' : 'POST'" @success="handleSuccess"
                 @error="handleError" :transform="formatData">
                 <input type="hidden" name="openPDF" v-model="openPDF" />

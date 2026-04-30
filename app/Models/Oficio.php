@@ -16,7 +16,7 @@ class Oficio extends Model
 
     public function autor()
     {
-        return User::where('cpf', $this->created_by)->value('name');
+        return Pessoa::where('cpf', $this->created_by)->value('nome');
     }
 
     public static function generateNumber($ano)

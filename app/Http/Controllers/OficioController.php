@@ -3,21 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Oficio\OficioPostRequest;
-use App\Models\Oficio;
+use App\Repositories\OficioRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Spatie\LaravelPdf\Enums\Format;
+
 
 class OficioController extends Controller
 {
+    protected OficioRepository $repository;
+    public function __construct(OficioRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index(Request $request)
     {
-        $oficios = Oficio::all()->sortByDesc(['ano', 'numero']);
+        $oficios = $this->repository->getAll();
         $data = [];
         foreach ($oficios as $key => $oficio) {
             $value = $oficio->toArray();
@@ -34,130 +37,53 @@ class OficioController extends Controller
             'oficios' => $data,
             'openID' => Inertia::always($openPDF),
             'oficio' => Inertia::optional(function() use ($id, $clonar) {
-                $oficio = Oficio::find($id);
-                if ($clonar) {
-                    $oficio->id = null;
-                    $oficio->data = now();
-                }
+                $oficio = $clonar ? $this->repository->getClone($id) : $this->repository->getOne($id);
                 return [...$oficio->toArray(), 'numeroCompleto' => $oficio->numeroCompleto];
             }),
         ]);
     }
 
-    public function edit($id)
+    public function store(OficioPostRequest $request)
     {
-        $oficio = Oficio::find($id);
-        return Inertia::render('oficios/form', [
-            'oficio' => $oficio,
-        ]);
-    }
-
-    public function create()
-    {
-        $oficio = new Oficio([
-            'data' => date('Y-m-d'),
-            'assunto' => '',
-            'tratamento' => '',
-            'destinatario' => '',
-            'cargo' => '',
-            'municipio' => '',
-            'conteudo' => '',
-        ]);
-        return Inertia::render('oficios/form', [
-            'oficio' => $oficio,
-        ]);
-    }
-
-    public function store(OficioPostRequest $request, $id=null)
-    {
-        $validated = $request->validated();
-        $oficio = null;
-
-        $user = Auth::user();
-        $validated['updated_by'] = $user->cpf;
-        $validated['data'] = date('Y/m/d', strtotime($validated['data']));
-
-        if ($id ?? null) {
-            Oficio::find($id)->update($validated);
-            $oficio = Oficio::find($id);
-        } else {
-            $oficio = new Oficio($validated);
-            $oficio->ano = date('Y', strtotime($validated['data']));
-            $oficio->numero = Oficio::generateNumber($oficio->ano);
-            $oficio->created_by = $user->cpf;
-            $oficio->save();
-        }
+        $oficio = $this->repository->create($request->validated());
 
         $openPDF = $request->input('openPDF', null);
         if ($openPDF=='1') $request->session()->put('openID', $oficio->id);
 
-        return response()->redirectToRoute('oficio');
+        return response()->redirectToRoute('oficios.index');
     }
 
-    public function view(Request $request, $id)
+    public function update(OficioPostRequest $request, int $id)
     {
-        $oficio = Oficio::find($id);
-        $url = $this->renderPDF($oficio);
+        $oficio = $this->repository->update($id, $request->validated());
+
+        $openPDF = $request->input('openPDF', null);
+        if ($openPDF=='1') $request->session()->put('openID', $id);
+
+        return response()->redirectToRoute('oficios.index');
+    }
+
+    public function show($id)
+    {
+        $oficio = $this->repository->getOne($id);
+        $url = $this->repository->renderPDF($oficio);
 
         return response()->file(public_path(Storage::url($url)));
     }
 
-    public function previewId(Request $request, $id)
+    public function preview(OficioPostRequest $request, ?int $id=null)
     {
-        $oficio = Oficio::find($id);
-        $url = $this->renderPDF($oficio);
-        return response()->json([
-            'url' => $url
-        ]);
-    }
-
-    public function preview(Request $request)
-    {
-        $validated = $request->validate([
-            'id' => 'nullable',
-            'data'   => ['required'],
-            'assunto'   => 'nullable',
-            'conteudo'   => ['required'],
-            'tratamento' => 'nullable',
-            'destinatario' => ['required'],
-            'cargo' => 'nullable',
-            'municipio' => ['required'],
-        ]);
-
-        if ($validated['id'] ?? null) {
-            $oficio = Oficio::find($validated['id'])->fill($validated);
-        } else {
-            $oficio = new Oficio($validated);
-        }
-        $url = $this->renderPDF($oficio, 'temp/' . strtotime(now()) . '.pdf');
+        $oficio = $this->repository->newPreview($id, $request->validated());
+        $url = $this->repository->renderPDF($oficio);
 
         return response()->json([
             'url' => Storage::url($url)
         ]);
     }
 
-    public function renderPDF(Oficio $oficio, $pdf = null)
-    {
-        $pdf = $pdf ?? "oficios/of_{$oficio->numero}_scm_{$oficio->ano}.pdf";
-        $top = 42;
-        $right = 20;
-        $bottom = 20;
-        $left = 20;
-
-        Pdf::view('oficio.renderPDF', ['oficio' => $oficio])
-            ->headerView('oficio.header')
-            ->footerView('oficio.footer', ['oficio' => $oficio])
-            ->format(Format::A4)
-            ->margins($top, $right, $bottom, $left)
-            ->disk('public')->save($pdf);
-
-        return $pdf;
-    }
-
     public function deletePreview(Request $request)
     {
-        $pdf = Str::replaceFirst('/storage', '', $request->input('pdfFile'));
-        $res = Storage::disk('public')->delete($pdf);
+        $res = $this->repository->deletePreview($request->input('pdfFile'));
         return response()->json([
             'res' => $res,
         ]);

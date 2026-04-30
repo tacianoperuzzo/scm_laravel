@@ -18,7 +18,7 @@ const menuItems = ref([
             {
                 label: 'Ofícios',
                 icon: 'pi pi-fw pi-user-edit',
-                route: 'oficio'
+                route: 'oficios.index'
             }
         ]
     },
@@ -86,7 +86,7 @@ const menuItems = ref([
             {
                 label: 'Usuários',
                 icon: 'pi pi-fw pi-file',
-                route: 'user.users'
+                route: 'users.index'
             }
         ]
     }

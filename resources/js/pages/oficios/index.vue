@@ -41,7 +41,7 @@ watch(() => props.oficio, async (newOficio) => {
 watch(() => props.openID, async (newID) => {
     if (newID && newID !== '0') {
         setTimeout(() => {
-            window.open(`/oficio/view/${newID}`, '_blank');
+            window.open(route('oficios.show', { id: newID }), '_blank');
         }, 1000);
     }
 })
@@ -80,7 +80,7 @@ watch(() => props.openID, async (newID) => {
                 <Button icon="pi pi-copy" severity="secondary" v-tooltip.top="'Clonar'" rounded
                     @click="clonarOficio(slotProps.data)" />
                 <Button as="a" icon="pi pi-file-pdf" severity="danger" v-tooltip.top="'Abrir PDF'"
-                    :href="`/oficio/view/${slotProps.data.id}`" target="_blank" rounded></Button>
+                    :href="route('oficios.show', { id: slotProps.data.id })" target="_blank" rounded></Button>
             </template>
         </Column>
     </DataTable>

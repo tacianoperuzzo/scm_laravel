@@ -3,50 +3,45 @@
 namespace App\Http\Controllers\Cadastros;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Cadastros\SetorPostRequest;
 use App\Models\Setor;
+use App\Repositories\SetorRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SetorController extends Controller
 {
+    protected SetorRepository $repository;
+    public function __construct(SetorRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index(Request $request)
     {
-        $setores = Setor::all();
         $id = $request->input('id');
         return Inertia::render('sistema/cadastros/setor/index', [
-            'setores' => $setores,
-            'setor' => Inertia::optional(fn()=>Setor::find($id))
+            'setores' => $this->repository->getAll(),
+            'setor' => Inertia::optional(fn()=>$this->repository->getOne($id))
         ]);
     }
 
-    public function store(Request $request)
+    public function store(SetorPostRequest $request)
     {
-        $validated = $request->validate([
-            'descricao' => ['string', 'max:255'],
-            'sigla' => ['string', 'max:255', 'nullable']
-        ]);
-        Setor::create($validated);
+        $this->repository->create($request->validated());
         return response()->redirectToRoute('setores.index');
     }
 
-    public function update(Request $request, Int $id)
+    public function update(SetorPostRequest $request, Int $id)
     {
-        $setor = Setor::find($id);
-        if (!$setor) throw new NotFoundHttpException();
-        $validated = $request->validate([
-            'descricao' => ['string', 'max:255'],
-            'sigla' => ['string', 'max:255', 'nullable']
-        ]);
-        $setor->update($validated);
+        $this->repository->update($id, $request->validated());
         return response()->redirectToRoute('setores.index');
     }
 
-    public function destroy(Request $request, Int $id)
+    public function destroy(Int $id)
     {
-        $setor = Setor::find($id);
-        if (!$setor) throw new NotFoundHttpException();
-        Setor::find($id)->delete();
+        $this->repository->delete($id);
         return response()->redirectToRoute('setores.index');
     }
 }

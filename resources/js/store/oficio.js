@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import api from '@/services/api'
 
 class Oficio {
-  id = 0
-  numero = 0
+  id = null
+  numero = null
   ano = (new Date()).getFullYear()
   data = new Date()
   destinatario = ""
@@ -34,11 +34,11 @@ export const useOficioStore = defineStore('oficio', {
     },
     async getPreviewUrl(obj) {
       return new Promise((response, reject)=>{
-        api.post('oficio/preview', obj).then(res=>response(res)).catch(err=>reject(err))
+        api.post(route('oficio.preview', {id: obj.id}), obj).then(res=>response(res)).catch(err=>reject(err))
       })
     },
     async deletePreview(file) {
-      api.post('oficio/delete-preview', {pdfFile: file}).then(()=>{})
+      api.post(route('oficio.delete-preview'), {pdfFile: file}).then(()=>{})
     }
   },
 })

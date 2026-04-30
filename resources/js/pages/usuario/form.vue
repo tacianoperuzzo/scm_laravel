@@ -45,7 +45,7 @@ watch(() => usuarioStore.usuario, (newUsuario) => {
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" @after-hide="closeDialog">
 
         <Panel :pt="{ root: 'pt-4', header: 'hidden!' }">
-            <Form :action="_usuario.id ? route('user.update', { id: _usuario.id }) : route('user.create')"
+            <Form :action="_usuario.id ? route('users.update', { id: _usuario.id }) : route('users.store')"
                 #default="{ errors }" :method="_usuario.id ? 'PUT' : 'POST'" @success="handleSuccess"
                 @error="handleError">
                 <input type="hidden" name="pessoa.id" v-model="_usuario.pessoa.id" />
@@ -74,24 +74,6 @@ watch(() => usuarioStore.usuario, (newUsuario) => {
                             <InputText id="iEmail" name="pessoa.email" v-model="_usuario.pessoa.email" fluid
                                 variant="filled" :invalid="('pessoa.email' in errors)" />
                             <label for="iEmail">E-mail</label>
-                        </FloatLabel>
-                    </cInputUI>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-4" v-if="((_usuario.id == auth.user.id) || !_usuario.id)">
-                    <cInputUI :errors="errors" field="password">
-                        <FloatLabel variant="on">
-                            <Password id="password" autocomplete="password" name="password" fluid variant="filled"
-                                toggleMask :invalid="('password' in errors)" :feedback="false" />
-                            <label for="password">Senha</label>
-                        </FloatLabel>
-                    </cInputUI>
-                    <cInputUI :errors="errors" field="password_confirmation">
-                        <FloatLabel variant="on">
-                            <Password id="confirmPassword" autocomplete="confirm-password" name="password_confirmation"
-                                toggleMask fluid variant="filled" :invalid="('password_confirmation' in errors)"
-                                :feedback="false" />
-                            <label for="confirmPassword">Confirmação de senha</label>
                         </FloatLabel>
                     </cInputUI>
                 </div>

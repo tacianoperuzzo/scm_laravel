@@ -3,68 +3,46 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pessoa;
-use App\Models\User;
+use App\Http\Requests\Settings\UserPostRequest;
+use App\Http\Requests\Settings\UserStatusPostRequest;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
+    protected UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     public function index(Request $request)
     {
-        $usuarios = User::all()->load('pessoa');
+        $usuarios = $this->userRepository->getAll()->load('pessoa');
         $id = $request->input('id');
         return Inertia::render('usuario/index',[
             'usuarios' => $usuarios,
-            'usuario' => Inertia::optional(fn()=>User::find($id)->load('pessoa')),
+            'usuario' => Inertia::optional(fn()=>$this->userRepository->getOne($id)->load('pessoa')),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(UserPostRequest $request)
     {
-        $validated = $request->validate([
-            'cpf' => ['required','string','max:11','unique:users,cpf'],
-            'pessoa.nome' => ['required', 'string', 'max:255'],
-            'pessoa.email' => ['required', 'string', 'email', 'unique:pessoas,email'],
-            'password' => ['required','string','max:100','confirmed'],
-        ]);
-        $user = User::create([...$validated, 'active'=>1]);
-        $pessoa = Pessoa::create([...$validated['pessoa'], 'cpf' => $validated['cpf']]);
-        return response()->redirectToRoute('user.users');
+        $this->userRepository->create($request->validated());
+        return response()->redirectToRoute('users.index');
     }
 
-    public function update(Request $request)
+    public function update(UserPostRequest $request, $id)
     {
-        $id = $request->input('id');
-        $usuario = User::find($id);
-        $pessoa = $usuario->pessoa;
-        if (!$usuario) throw new NotFoundHttpException;
-        $validated = $request->validate([
-            'cpf' => ['required','string','max:11',"unique:users,cpf,$id,id"],
-            'pessoa.nome' => ['required', 'string', 'max:255'],
-            'pessoa.email' => ['required', 'string', 'email', "unique:pessoas,email,$pessoa->id,id"],
-            'active' => ['required', 'integer', 'between:0,1']
-        ]);
-        $password = $request->validate([
-            'password' => ['nullable', 'string', 'max:255', 'confirmed'],
-        ]);
-        $usuario->update($validated);
-        $pessoa->update([...$validated['pessoa'], 'cpf' => $validated['cpf']]);
-        if ($password['password']??null) {
-            $usuario->update($password);
-        }
-        return response()->redirectToRoute('user.users');
+        $this->userRepository->update($id, $request->validated());
+        return response()->redirectToRoute('users.index');
     }
 
-    public function status(Request $request, $id)
+    public function status(UserStatusPostRequest $request, $id)
     {
-        $usuario = User::find($id);
-        if (!$usuario) throw new NotFoundHttpException;
-        $validated = $request->validate([
-            'active' => ['required', 'integer', 'between:0,1']
-        ]);
-        $usuario->update($validated);
-        return response()->redirectToRoute('user.users');
+        $this->userRepository->updateStatus($id, $request->validated());
+        return response()->redirectToRoute('users.index');
     }
 }

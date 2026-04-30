@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Form, router } from '@inertiajs/vue3';
-import { reactive, ref, watch, inject } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { useSetorStore } from '@/store/setor';
 import { useToast } from 'primevue/usetoast';
 import cInputUI from '@/components/ui/cInputUI.vue';
 
 const toast = useToast();
-const auth = inject('auth');
 const setorStore = useSetorStore();
 const _dialog = reactive({
     show: false,

@@ -3,48 +3,45 @@
 namespace App\Http\Controllers\Cadastros;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Cadastros\FuncaoPostRequest;
 use App\Models\Funcao;
+use App\Repositories\FuncaoRepository;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FuncaoController extends Controller
 {
+    protected FuncaoRepository $repository;
+    public function __construct(FuncaoRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index(Request $request)
     {
-        $funcoes = Funcao::all();
         $id = $request->input('id');
         return Inertia::render('sistema/cadastros/funcao/index', [
-            'funcoes' => $funcoes,
-            'funcao' => Inertia::optional(fn()=>Funcao::find($id))
+            'funcoes' => $this->repository->getAll(),
+            'funcao' => Inertia::optional(fn()=>$this->repository->getOne($id))
         ]);
     }
 
-    public function store(Request $request)
+    public function store(FuncaoPostRequest $request)
     {
-        $validated = $request->validate([
-            'descricao' => ['string', 'max:255']
-        ]);
-        Funcao::create($validated);
+        $this->repository->create($request->validated());
         return response()->redirectToRoute('funcoes.index');
     }
 
-    public function update(Request $request, Int $id)
+    public function update(FuncaoPostRequest $request, Int $id)
     {
-        $funcao = Funcao::find($id);
-        if (!$funcao) throw new NotFoundHttpException();
-        $validated = $request->validate([
-            'descricao' => ['string', 'max:255']
-        ]);
-        $funcao->update($validated);
+        $this->repository->update($id, $request->validated());
         return response()->redirectToRoute('funcoes.index');
     }
 
-    public function destroy(Request $request, Int $id)
+    public function destroy(Int $id)
     {
-        $funcao = Funcao::find($id);
-        if (!$funcao) throw new NotFoundHttpException();
-        Funcao::find($id)->delete();
+        $this->repository->delete($id);
         return response()->redirectToRoute('funcoes.index');
     }
 }
