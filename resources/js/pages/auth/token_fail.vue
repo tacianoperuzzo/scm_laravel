@@ -18,7 +18,7 @@ defineOptions({
             Solicite um novo link de recuperação de senha.
         </span>
         <div class="mt-6">
-            <Button as="a" label="Solicitar novo link de recuperação" :href="route('login')" class="w-full" />
+            <Button label="Solicitar novo link de recuperação" @click="router.visit('login')" class="w-full" />
         </div>
     </div>
 </template>

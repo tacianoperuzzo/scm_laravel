@@ -18,7 +18,7 @@ defineOptions({
             Você já pode fazer login com sua nova senha.
         </span>
         <div class="mt-6">
-            <Button label="Fazer login" @click="router.visit('login')" class="w-full" />
+            <Button as="a" label="Fazer login" :href="route('login')" class="w-full" />
         </div>
     </div>
 </template>

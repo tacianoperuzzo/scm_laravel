@@ -2,6 +2,7 @@
 import scmLogo from '@/assets/images/scm-logo-sc-negative.png';
 </script>
 <template>
+    <Toast />
     <div class="min-h-screen w-full flex bg-surface-50 dark:bg-surface-950">
 
         <div class="hidden md:flex flex-1 items-center justify-center bg-green-800/95 p-12 text-white">

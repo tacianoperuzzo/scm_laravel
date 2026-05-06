@@ -9,8 +9,8 @@ defineOptions({
 });
 
 defineProps({
-    token_id: Number,
-    usuario_id: Number,
+    token: String,
+    email: String,
 })
 
 </script>
@@ -23,9 +23,15 @@ defineProps({
             Redefina sua senha.
         </span>
     </div>
-    <Form route="user.reset-password" method="post" v-slot="{ errors }" class="flex flex-col gap-5">
-        <input type="hidden" name="id" :value="usuario_id" />
-        <input type="hidden" name="token_id" :value="token_id" />
+    <Form :action="route('password.store')" method="post" v-slot="{ errors }" class="flex flex-col gap-5">
+        <input type="hidden" name="email" :value="email" />
+        <input type="hidden" name="token" :value="token" />
+        <cInputUI :errors="errors" field="cpf">
+            <FloatLabel variant="on">
+                <InputText id="iCPF" name="cpf" fluid variant="filled" :invalid="('cpf' in errors)" toggleMask />
+                <label for="iCPF">CPF</label>
+            </FloatLabel>
+        </cInputUI>
         <cInputUI :errors="errors" field="password">
             <FloatLabel variant="on">
                 <Password id="iPassword" name="password" fluid variant="filled" :invalid="('password' in errors)"
@@ -35,12 +41,14 @@ defineProps({
         </cInputUI>
         <cInputUI :errors="errors" field="passwordConfirmation">
             <FloatLabel variant="on">
-                <Password id="iPasswordConfirmation" name="passwordConfirmation" fluid variant="filled"
+                <Password id="iPasswordConfirmation" name="password_confirmation" fluid variant="filled"
                     :invalid="('passwordConfirmation' in errors)" toggleMask />
                 <label for="iPasswordConfirmation">Confirmação da nova senha</label>
             </FloatLabel>
         </cInputUI>
-
+        <Message class="my-2" v-show="('token' in errors)" severity="error" variant="simple" size="small">{{
+            errors['token'] }}
+        </Message>
         <Button label="Redefinir senha" type="submit" class="w-full" />
 
     </Form>

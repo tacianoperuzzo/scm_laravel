@@ -61,4 +61,18 @@ class UserRepository implements UserRepositoryInterface
         }
         return false;
     }
+
+    public function findByCpfEmail(string $cpf, string $email): ? Model
+    {
+        return User::where('cpf', $cpf)->whereHas('pessoa', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->first();
+    }
+
+    public function findByEmail(string $email): ? Model
+    {
+        return User::whereHas('pessoa', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->first();
+    }
 }
