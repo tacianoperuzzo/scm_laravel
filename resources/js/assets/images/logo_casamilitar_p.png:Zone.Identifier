@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=http://localhost:8000/
+HostUrl=http://127.0.0.1:5173/resources/images/logo_casamilitar_p.png

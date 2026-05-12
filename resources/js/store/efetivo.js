@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import Pessoa from './pessoa'
+import api from '@/services/api'
 
 class Efetivo {
   id = 0
@@ -27,6 +28,11 @@ export const useEfetivoStore = defineStore('efetivo', {
     newEfetivo() {
       this.efetivo = new Efetivo()
       this.efetivo.pessoa = new Pessoa()
+    },
+    async findPessoaByCpf(cpf) {
+      return new Promise((response, reject)=>{
+        api.get(route('pessoa.findByCpf', cpf)).then(res=>response(res.data)).catch(err=>reject(err))
+      })
     }
   },
 })

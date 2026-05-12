@@ -1,6 +1,6 @@
 <script setup>
 import cMenuBar from '@/components/ui/cMenuBar.vue';
-import scmLogo from '@/assets/images/scm-logo-sc-negative.png';
+import scmLogo from '@/assets/images/logo_casamilitar_p.png';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -124,11 +124,11 @@ const toggle = (event) => {
 };
 </script>
 <template>
-    <nav class="bg-green-800/95 p-4 fixed w-full z-10 top-0">
+    <nav class="bg-green-800/95 py-1 px-4 fixed w-full z-10 top-0">
         <div class="container mx-auto flex justify-start items-center">
             <!-- Logo/Brand Name -->
             <a href="/">
-                <img :src="scmLogo" alt="SCM Logo" class="h-10" />
+                <img :src="scmLogo" alt="SCM Logo" class="h-18" />
             </a>
             <!-- Menu Links Container -->
             <div class="flex justify-between items-center space-x-4 ml-2 mr-2 grow">

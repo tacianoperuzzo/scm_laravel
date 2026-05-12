@@ -47,9 +47,9 @@ const openFormRecovery = () => {
         </span>
         <p class="my-3">
             <Message severity="error" v-if="flash?.error && flash.error != 'Unauthorized access'" :life="10000"
-                closable>{{
-                    flash?.error
-                }}</Message>
+                closable>{{ flash?.error }}
+            </Message>
+            <Message severity="success" v-if="status" :life="10000" closable>{{ status }}</Message>
         </p>
     </div>
 
@@ -85,8 +85,8 @@ const openFormRecovery = () => {
             <label for="remember" class="text-sm text-surface-600 dark:text-surface-400">Lembrar de mim</label>
         </div>
 
-        <Message class="my-2" v-show="errors.cpf" severity="error" variant="simple" size="small">
-            Erro: Nenhum usuário ativo com estas credenciais.
+        <Message class="my-2" v-show="errors.cpf || errors.email" severity="error" variant="simple" size="small">
+            {{ errors.cpf || errors.email }}
         </Message>
         <Button type="submit" label="Entrar" icon="pi pi-sign-in" class="w-full py-3 mt-2" :loading="loading" />
 

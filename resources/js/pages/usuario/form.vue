@@ -69,10 +69,10 @@ watch(() => usuarioStore.usuario, (newUsuario) => {
                             <label for="iNome">Nome</label>
                         </FloatLabel>
                     </cInputUI>
-                    <cInputUI :errors="errors" field="pessoa.email">
+                    <cInputUI :errors="errors" field="email">
                         <FloatLabel variant="on">
-                            <InputText id="iEmail" name="pessoa.email" v-model="_usuario.pessoa.email" fluid
-                                variant="filled" :invalid="('pessoa.email' in errors)" />
+                            <InputText id="iEmail" name="email" v-model="_usuario.email" fluid variant="filled"
+                                :invalid="('email' in errors)" />
                             <label for="iEmail">E-mail</label>
                         </FloatLabel>
                     </cInputUI>

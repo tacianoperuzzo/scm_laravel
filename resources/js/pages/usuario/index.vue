@@ -79,6 +79,10 @@ const excluir = (id: number) => {
     });
 };
 
+const sendLinkPasswordRecovery = () => {
+    toast.add({ severity: 'info', summary: 'Em desenvolvimento', detail: 'Função de envio de link de recuperação de senha em desenvolvimento', life: 3000 });
+}
+
 watch(() => props.usuario, async (newUsuario) => {
     if (!usuarioStore.usuario && newUsuario) {
         usuarioStore.setUsuario(newUsuario);
@@ -105,7 +109,7 @@ watch(() => props.usuario, async (newUsuario) => {
             </div>
         </template>
         <Column field="pessoa.nome" header="Nome" sortable></Column>
-        <Column field="pessoa.email" header="Email" sortable></Column>
+        <Column field="email" header="Email" sortable></Column>
         <Column field="active" header="Ativo" sortable>
             <template #body="slotProps">
                 <span v-if="slotProps.data.active" class="text-green-500 font-bold">Sim</span>
@@ -118,6 +122,8 @@ watch(() => props.usuario, async (newUsuario) => {
                     rounded @click="setStatus(slotProps.data.id, false)" />
                 <Button v-else icon="pi pi-check" severity="secondary" v-tooltip.top="'Ativar'" rounded
                     @click="setStatus(slotProps.data.id, true)" />
+                <Button icon="pi pi-envelope" severity="info" v-tooltip.top="'Enviar link de redefinição de senha'"
+                    rounded @click="sendLinkPasswordRecovery" />
                 <Button icon="pi pi-trash" severity="danger" v-tooltip.top="'Excluir'" rounded
                     @click="excluir(slotProps.data.id)" disabled />
             </template>

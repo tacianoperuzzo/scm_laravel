@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import scmLogo from '@/assets/images/scm-logo-sc-negative.png';
+import scmLogo from '@/assets/images/logo_casamilitar_p.png';
 </script>
 <template>
     <Toast />
@@ -8,10 +8,10 @@ import scmLogo from '@/assets/images/scm-logo-sc-negative.png';
         <div class="hidden md:flex flex-1 items-center justify-center bg-green-800/95 p-12 text-white">
             <div class="max-w-md text-center">
                 <div class="mb-8 flex justify-center">
-                    <img :src="scmLogo" alt="SCM Logo" class="h-24" />
+                    <img :src="scmLogo" alt="SCM Logo" />
                 </div>
-                <h1 class="text-4xl font-bold mb-4 tracking-tight">Bem-vindo!</h1>
-
+                <h1 class="text-4xl font-bold mb-4 tracking-tight">Sistema Interno SCM</h1>
+                <h2>Bem vindo!</h2>
             </div>
         </div>
 

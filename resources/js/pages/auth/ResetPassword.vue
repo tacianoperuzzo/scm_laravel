@@ -50,6 +50,6 @@ defineProps({
             errors['token'] }}
         </Message>
         <Button label="Redefinir senha" type="submit" class="w-full" />
-
+        <a href="/login" class="text-sm text-center text-surface-600 dark:text-surface-400 mt-3">Voltar para o login</a>
     </Form>
 </template>

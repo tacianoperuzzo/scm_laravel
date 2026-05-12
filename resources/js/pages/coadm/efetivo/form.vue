@@ -29,6 +29,19 @@ const handleError = () => {
     toast.add({ severity: 'error', summary: 'Erro', detail: 'Verifique os dados informados.', life: 3000 });
 }
 
+const findPessoa = async () => {
+    if (_efetivo.value.cpf?.length === 11) {
+        let data = await efetivoStore.findPessoaByCpf(_efetivo.value.cpf);
+        console.log(data);
+        if (data?.id) {
+            _efetivo.value.pessoa = data;
+            toast.add({ severity: 'success', summary: 'Encontrado', detail: 'Pessoa encontrada e vinculada ao efetivo.', life: 3000 });
+        } else {
+            toast.add({ severity: 'warn', summary: 'Não encontrado', detail: 'Nenhuma pessoa encontrada com esse CPF.', life: 3000 });
+        }
+    }
+}
+
 watch(() => efetivoStore.efetivo, (newEfetivo) => {
     if (newEfetivo) {
         _efetivo.value = newEfetivo;
@@ -58,7 +71,7 @@ watch(() => efetivoStore.efetivo, (newEfetivo) => {
                                 <cInputUI :errors="errors" field="pessoa.cpf">
                                     <FloatLabel variant="on">
                                         <InputMask id="iCpf" name="cpf" v-model="_efetivo.cpf" mask="99999999999" fluid
-                                            variant="filled" :invalid="('cpf' in errors)" />
+                                            variant="filled" :invalid="('cpf' in errors)" @blur="findPessoa" />
                                         <label for="iCpf">CPF</label>
                                     </FloatLabel>
                                 </cInputUI>
@@ -82,13 +95,13 @@ watch(() => efetivoStore.efetivo, (newEfetivo) => {
                                 <cInputUI :errors="errors" field="pessoa.email">
                                     <FloatLabel variant="on">
                                         <InputText id="iEmail" name="pessoa.email" v-model="_efetivo.pessoa.email" fluid
-                                            variant="filled" :invalid="('pessoa.email' in errors)" />
+                                            variant="filled" :invalid="('pessoa.email' in errors)" disabled />
                                         <label for="iEmail">Email</label>
                                     </FloatLabel>
                                 </cInputUI>
                                 <cInputUI :errors="errors" field="pessoa.telefone">
                                     <FloatLabel variant="on">
-                                        <InputText id="iTelefone" name="pessoa.telefone"
+                                        <InputMask id="iTelefone" name="pessoa.telefone" mask="(99) 99999-9999"
                                             v-model="_efetivo.pessoa.telefone" fluid variant="filled"
                                             :invalid="('pessoa.telefone' in errors)" />
                                         <label for="iTelefone">Telefone</label>
@@ -133,8 +146,9 @@ watch(() => efetivoStore.efetivo, (newEfetivo) => {
                                 </cInputUI>
                                 <cInputUI :errors="errors" field="pessoa.enderecoCep">
                                     <FloatLabel variant="on">
-                                        <InputText id="iCep" name="pessoa.cep" v-model="_efetivo.pessoa.cep" fluid
-                                            variant="filled" :invalid="('pessoa.cep' in errors)" />
+                                        <InputMask id="iCep" name="pessoa.cep" v-model="_efetivo.pessoa.cep"
+                                            mask="99999-999" fluid variant="filled"
+                                            :invalid="('pessoa.cep' in errors)" />
                                         <label for="iCep">CEP</label>
                                     </FloatLabel>
                                 </cInputUI>
@@ -144,8 +158,8 @@ watch(() => efetivoStore.efetivo, (newEfetivo) => {
                             <div class="grid grid-cols-3 gap-4 mb-4">
                                 <cInputUI :errors="errors" field="matricula">
                                     <FloatLabel variant="on">
-                                        <InputText id="iMatricula" name="matricula" v-model="_efetivo.matricula" fluid
-                                            variant="filled" :invalid="('matricula' in errors)" />
+                                        <InputMask id="iMatricula" name="matricula" v-model="_efetivo.matricula"
+                                            mask="999999-9" fluid variant="filled" :invalid="('matricula' in errors)" />
                                         <label for="iMatricula">Matrícula</label>
                                     </FloatLabel>
                                 </cInputUI>

@@ -20,19 +20,9 @@ class NewPasswordController extends Controller
     /**
      * Show the password reset page.
      */
-    public function create(UserRepository $userRepository, Request $request): Response
+    public function create(Request $request): Response
     {
-        $token = $request->route('token');
-        $email = $request->email;
-        $user = $userRepository->findByEmail($email)?->load('pessoa');
-        $user->email = $user->pessoa->email;
-        $status = Password::broker()->tokenExists($user, $token);
-
-        if (!$status) {
-            return Inertia::render('auth/recovery_fail');
-        }
-
-        return Inertia::render('auth/reset_password', [
+        return Inertia::render('auth/ResetPassword', [
             'email' => $request->email,
             'token' => $request->route('token'),
         ]);
@@ -43,41 +33,47 @@ class NewPasswordController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(UserRepository $userRepository,Request $request)
+    public function store(UserRepository $userRepository, Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'token' => 'required',
+            'cpf' => ['required', 'string'],
             'email' => 'required|email',
-            'cpf' => 'required|string|size:11',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = $userRepository->findByCpfEmail($validated['cpf'], $validated['email'])?->load('pessoa');
-        if (!$user) {
+        $user = $userRepository->findByCpfEmail($request->string('cpf'), $request->string('email'));
+        if (!$user || !$user->active) {
             throw ValidationException::withMessages([
-                'email' => [__('Erro, usuário não encontrado com estas credenciais.')],
+                'cpf' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 
-        $user->email = $user->pessoa->email;
-        $status = Password::broker()->tokenExists($user, $validated['token']);
-        if (!$status) {
-            throw ValidationException::withMessages([
-                'token' => [__('Token inválido ou expirado.')],
-            ]);
+        // Here we will attempt to reset the user's password. If it is successful we
+        // will update the password on an actual user model and persist it to the
+        // database. Otherwise we will parse the error and return the response.
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        // If the password was successfully reset, we will redirect the user back to
+        // the application's home authenticated view. If there is an error we can
+        // redirect them back to where they came from with their error message.
+        if ($status == Password::PasswordReset) {
+            return to_route('login')->with('status', __($status));
         }
 
-        Password::broker()->deleteToken($user);
-
-        unset($user->email);
-        $user->password = Hash::make($validated['password']);
-        $user->setRememberToken(Str::random(60));
-        $user->save();
-
-
-        event(new PasswordReset($user));
-
-        return Inertia::render('auth/recovery_success');
-
+        throw ValidationException::withMessages([
+            'token' => [__($status)],
+        ]);
     }
 }

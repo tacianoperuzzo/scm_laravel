@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 
 class UserRepository implements UserRepositoryInterface
@@ -22,9 +23,9 @@ class UserRepository implements UserRepositoryInterface
 
     public function create(array $data): Model
     {
-        $userCreated = User::create([...$data, 'active'=>1]);
+        $userCreated = User::create([...$data, 'password' => Str::random(), 'active'=>1]);
         if ($userCreated) {
-            $userCreated->pessoa()->create([...$data['pessoa'], 'cpf' => $data['cpf']]);
+            $userCreated->pessoa()->create([...$data['pessoa'], 'cpf' => $data['cpf'], 'email' => $data['email']]);
         }
         return $userCreated;
     }
@@ -40,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
         $user->update($data);
-        $pessoa->update([...$data['pessoa'], 'cpf' => $data['cpf']]);
+        $pessoa->update([...$data['pessoa'], 'cpf' => $data['cpf'], 'email' => $data['email']]);
         return true;
     }
 

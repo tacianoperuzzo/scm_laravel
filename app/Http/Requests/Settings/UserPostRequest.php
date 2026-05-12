@@ -29,8 +29,9 @@ class UserPostRequest extends FormRequest
         $pessoa_id = $pessoa ? $pessoa->id : null;
         return [
             'cpf' => ['required','string','max:11',"unique:users,cpf,{$this->route('user')}"],
+            'email' => ['required', 'string', 'email', "unique:users,email,{$this->route('user')}"],
             'pessoa.nome' => ['required', 'string', 'max:255'],
-            'pessoa.email' => ['required', 'string', 'email', "unique:pessoas,email,{$pessoa_id}"],
+            //'pessoa.email' => ['required', 'string', 'email', "unique:pessoas,email,{$pessoa_id}"],
             'active' => [Rule::requiredIf(fn() => $this->route('user')), 'integer', 'between:0,1']
         ];
     }
