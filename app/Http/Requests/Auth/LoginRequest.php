@@ -43,7 +43,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $user = User::where('cpf', $this->string('cpf'))->first();
-        if (! $user || ! $user->active) {
+        if (! $user || ! $user->ativo) {
             throw ValidationException::withMessages([
                 'cpf' => trans('auth.failed'),
             ]);

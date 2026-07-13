@@ -49,7 +49,7 @@ watch(() => usuarioStore.usuario, (newUsuario) => {
                 #default="{ errors }" :method="_usuario.id ? 'PUT' : 'POST'" @success="handleSuccess"
                 @error="handleError">
                 <input type="hidden" name="pessoa.id" v-model="_usuario.pessoa.id" />
-                <input type="hidden" name="active" :value="_usuario.active ? 1 : 0" />
+                <input type="hidden" name="ativo" :value="_usuario.ativo ? 1 : 0" />
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <cInputUI :errors="errors" field="cpf">
@@ -79,7 +79,7 @@ watch(() => usuarioStore.usuario, (newUsuario) => {
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <ToggleButton v-model="_usuario.active" onIcon="pi pi-check" onLabel="Ativo" offIcon="pi pi-times"
+                    <ToggleButton v-model="_usuario.ativo" onIcon="pi pi-check" onLabel="Ativo" offIcon="pi pi-times"
                         size="small" offLabel="Inativo" class="w-full sm:w-40" aria-label="Confirmation" />
                 </div>
 

@@ -37,7 +37,7 @@ class PasswordResetLinkController extends Controller
 
         $user = $userRepository->findByCpfEmail($request->string('cpf'), $request->string('email'));
 
-        if (!$user || !$user->active) {
+        if (!$user || !$user->ativo) {
             throw ValidationException::withMessages([
                 'cpf' => trans('auth.failed'),
                 'email' => trans('auth.failed'),

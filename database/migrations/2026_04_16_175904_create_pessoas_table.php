@@ -24,6 +24,15 @@ return new class extends Migration
             $table->string('endereco_municipio')->nullable();
             $table->string('endereco_cep')->nullable();
             $table->string('foto')->nullable();
+            $table->string('matricula')->nullable();
+            $table->integer('postograd_id')->nullable();
+            $table->string('nome_guerra')->nullable();
+            $table->integer('setor_id')->nullable();
+            $table->integer('funcao_id')->nullable();
+            $table->string('pasta')->nullable();
+            $table->date('data_entrada')->nullable();
+            $table->date('data_saida')->nullable();
+            $table->text('observacao')->nullable();
             $table->timestamps();
         });
     }

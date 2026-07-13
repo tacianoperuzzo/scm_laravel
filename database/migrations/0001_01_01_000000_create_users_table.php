@@ -18,7 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->tinyInteger('active');
+            $table->tinyInteger('ativo');
+            $table->tinyInteger('nivel');
             $table->timestamps();
         });
 

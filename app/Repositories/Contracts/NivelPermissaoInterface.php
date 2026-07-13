@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
-interface EfetivoInterface
+interface NivelPermissaoInterface extends BaseInterface
 {
     //
 }

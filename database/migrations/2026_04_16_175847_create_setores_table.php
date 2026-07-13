@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('setores', function (Blueprint $table) {
             $table->id();
             $table->string('descricao');
-            $table->string('sigla');
+            $table->string('abreviatura');
         });
     }
 

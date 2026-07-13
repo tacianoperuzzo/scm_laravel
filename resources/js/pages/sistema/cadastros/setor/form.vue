@@ -57,11 +57,11 @@ watch(() => setorStore.setor, (newSetor) => {
                             <label for="iDescricao">Descrição</label>
                         </FloatLabel>
                     </cInputUI>
-                    <cInputUI :errors="errors" field="sigla">
+                    <cInputUI :errors="errors" field="abreviatura">
                         <FloatLabel variant="on">
-                            <InputText id="iSigla" name="sigla" v-model="_setor.sigla" fluid variant="filled"
-                                :invalid="('sigla' in errors)" />
-                            <label for="iSigla">Sigla</label>
+                            <InputText id="iabreviatura" name="abreviatura" v-model="_setor.abreviatura" fluid
+                                variant="filled" :invalid="('abreviatura' in errors)" />
+                            <label for="iAbreviatura">Abreviatura</label>
                         </FloatLabel>
                     </cInputUI>
                 </div>

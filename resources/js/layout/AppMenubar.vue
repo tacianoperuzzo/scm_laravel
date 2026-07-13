@@ -29,7 +29,6 @@ const menuItems = ref([
             {
                 label: 'Efetivo',
                 icon: 'pi pi-fw pi-user-plus',
-                route: 'efetivo'
             },
         ]
     },
@@ -39,7 +38,8 @@ const menuItems = ref([
         items: [
             {
                 label: 'Relatório de Serviços',
-                icon: 'pi pi-fw pi-list'
+                icon: 'pi pi-fw pi-list',
+                route: 'relatorio-servico.index'
             },
         ]
     },

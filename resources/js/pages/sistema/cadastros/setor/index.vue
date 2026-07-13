@@ -64,8 +64,8 @@ watch(() => props.setor, async (newSetor) => {
 
     <Head title="Setores" />
     <DataTable v-model:filters="filters" :value="setores" size="normal" stripedRows class="p-datatable-sm"
-        selectionMode="single" dataKey="id" :globalFilterFields="['descricao', 'sigla']" :paginator="true" :rows="20"
-        :rowsPerPageOptions="[5, 10, 20, 50, 100]" @rowSelect="getSetor">
+        selectionMode="single" dataKey="id" :globalFilterFields="['descricao', 'abreviatura']" :paginator="true"
+        :rows="20" :rowsPerPageOptions="[5, 10, 20, 50, 100]" @rowSelect="getSetor">
         <template #header>
             <div class="flex flex-wrap gap-2 items-center justify-start">
                 <h4 class="text-2xl font-bold">Setores</h4>
@@ -80,7 +80,7 @@ watch(() => props.setor, async (newSetor) => {
         </template>
         <Column field="id" header="Id"></Column>
         <Column field="descricao" header="Descrição" sortable></Column>
-        <Column field="sigla" header="Sigla" sortable></Column>
+        <Column field="abreviatura" header="Abreviatura" sortable></Column>
         <Column class="w-auto flex justify-end gap-2">
             <template #body="slotProps">
                 <Button icon="pi pi-trash" severity="danger" v-tooltip.top="'Excluir'"
