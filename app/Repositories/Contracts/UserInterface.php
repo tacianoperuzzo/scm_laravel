@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface UserRepositoryInterface extends BaseInterface
+interface UserInterface extends BaseInterface
 {
     public function updateStatus(int $id, array $data): bool;
 

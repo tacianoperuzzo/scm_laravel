@@ -64,8 +64,8 @@ watch(() => props.funcao, async (newFuncao) => {
 
     <Head title="Funções" />
     <DataTable v-model:filters="filters" :value="funcoes" size="normal" stripedRows class="p-datatable-sm"
-        selectionMode="single" dataKey="id" :globalFilterFields="['descricao', 'sigla']" :paginator="true" :rows="20"
-        :rowsPerPageOptions="[5, 10, 20, 50, 100]" @rowSelect="getFuncao">
+        selectionMode="single" dataKey="id" :globalFilterFields="['descricao', 'abreviatura']" :paginator="true"
+        :rows="20" :rowsPerPageOptions="[5, 10, 20, 50, 100]" @rowSelect="getFuncao">
         <template #header>
             <div class="flex flex-wrap gap-2 items-center justify-start">
                 <h4 class="text-2xl font-bold">Funções</h4>

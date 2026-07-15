@@ -2,15 +2,26 @@
 import { Head } from '@inertiajs/vue3';
 import { FilterMatchMode } from '@primevue/core/api';
 import { ref, watch } from 'vue';
-import FormUsuario from './form.vue';
+import FormPessoa from 'pages/pessoa/form.vue';
 import { router } from '@inertiajs/vue3';
 import { useUsuarioStore } from '@/store/usuario';
+import { usePessoaStore } from '@/store/pessoa';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import { Data } from '@/generated/data';
 
-const props = defineProps<{ usuarios: object[], usuario?: object | null, errors?: any | null }>()
+const props = defineProps<{
+    usuarios: object[],
+    usuario?: object | null,
+    cargos: Data.Cargo[],
+    setores: Data.Setor[],
+    funcoes: Data.Funcao[],
+    niveis: Data.Funcao[],
+    errors?: any | null
+}>()
 
 const usuarioStore = useUsuarioStore();
+const pessoaStore = usePessoaStore();
 const confirm = useConfirm();
 const toast = useToast();
 
@@ -19,11 +30,18 @@ const filters = ref({
 });
 
 const getUsuario = (event: any) => {
-    router.reload({ only: ['usuario'], data: { id: event?.data?.id ?? null }, preserveUrl: true });
+    router.reload({
+        only: ['usuario'], data: { id: event?.data?.id ?? null }, preserveUrl: true,
+        onSuccess: () => {
+            usuarioStore.setUsuario(props.usuario);
+            pessoaStore.setPessoa(props.usuario?.pessoa);
+        }
+    });
 };
 
 const newUsuario = () => {
     usuarioStore.newUsuario();
+    pessoaStore.newPessoa();
 }
 
 const setStatus = (id: number, ativar: boolean) => {
@@ -41,7 +59,7 @@ const setStatus = (id: number, ativar: boolean) => {
             severity: ativar ? 'success' : 'danger'
         },
         accept: () => {
-            router.put(route('user.status', { id }), { active: ativar ? 1 : 0 }, {
+            router.put(route('user.status', { id }), { ativo: ativar ? 1 : 0 }, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {
@@ -79,13 +97,20 @@ const excluir = (id: number) => {
     });
 };
 
-const sendLinkPasswordRecovery = () => {
-    toast.add({ severity: 'info', summary: 'Em desenvolvimento', detail: 'Função de envio de link de recuperação de senha em desenvolvimento', life: 3000 });
+const sendLinkPasswordRecovery = async (id) => {
+    toast.add({ severity: 'info', summary: 'Aguarde', detail: 'Enviando email de redefinição de senha', life: 3000 });
+    let data = await usuarioStore.enviaEmailRecuperacaoSenha(id);
+    if (data.success) {
+        toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Email de redefinição de senha enviado com sucesso', life: 3000 });
+    } else {
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao enviar email de redefinição de senha', life: 3000 });
+    }
 }
 
 watch(() => props.usuario, async (newUsuario) => {
-    if (!usuarioStore.usuario && newUsuario) {
+    if (!pessoaStore.pessoa && newUsuario?.pessoa) {
         usuarioStore.setUsuario(newUsuario);
+        pessoaStore.setPessoa(newUsuario.pessoa);
     }
 })
 
@@ -110,24 +135,24 @@ watch(() => props.usuario, async (newUsuario) => {
         </template>
         <Column field="pessoa.nome" header="Nome" sortable></Column>
         <Column field="email" header="Email" sortable></Column>
-        <Column field="active" header="Ativo" sortable>
+        <Column field="ativo" header="Ativo" sortable>
             <template #body="slotProps">
-                <span v-if="slotProps.data.active" class="text-green-500 font-bold">Sim</span>
+                <span v-if="slotProps.data.ativo" class="text-green-500 font-bold">Sim</span>
                 <span v-else class="text-red-500 font-bold">Não</span>
             </template>
         </Column>
         <Column class="w-auto flex justify-end gap-2">
             <template #body="slotProps">
-                <Button v-if="slotProps.data.active" icon="pi pi-times" severity="secondary" v-tooltip.top="'Desativar'"
+                <Button v-if="slotProps.data.ativo" icon="pi pi-times" severity="secondary" v-tooltip.top="'Desativar'"
                     rounded @click="setStatus(slotProps.data.id, false)" />
                 <Button v-else icon="pi pi-check" severity="secondary" v-tooltip.top="'Ativar'" rounded
                     @click="setStatus(slotProps.data.id, true)" />
                 <Button icon="pi pi-envelope" severity="info" v-tooltip.top="'Enviar link de redefinição de senha'"
-                    rounded @click="sendLinkPasswordRecovery" />
+                    rounded @click="sendLinkPasswordRecovery(slotProps.data.id)" />
                 <Button icon="pi pi-trash" severity="danger" v-tooltip.top="'Excluir'" rounded
                     @click="excluir(slotProps.data.id)" disabled />
             </template>
         </Column>
     </DataTable>
-    <FormUsuario />
+    <FormPessoa :cargos="cargos" :setores="setores" :funcoes="funcoes" :niveis="niveis" />
 </template>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 class Setor {
   id = 0
   descricao = null
-  sigla = null
+  abreviatura = null
 }
 
 export const useSetorStore = defineStore('setor', {

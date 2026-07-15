@@ -1,10 +1,16 @@
 @component('mail::message')
 
-Hi, {{ $user->name }}, forgot password?
+# Olá, {{ $user->pessoa->nome }}!
+
+Recebemos uma solicitação de recuperação de senha.
+Para redefiní-la, utilize o link abaixo.
 
 @component('mail::button', ['url'=>url('reset-password/'.$user->remember_token.'?email='.$user->email)])
-Reset your password
+Redefinir a senha
 @endcomponent
 
-Thanks, <br>
+Caso não tenha solicitado, pode ignorar esta solicitação.
+
+Obrigado, <br>
+{{ config('app.name') }}
 @endcomponent

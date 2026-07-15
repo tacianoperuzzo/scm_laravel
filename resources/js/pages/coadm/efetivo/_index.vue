@@ -4,12 +4,14 @@ import { Data } from '@/generated/data';
 import { FilterMatchMode } from '@primevue/core/api';
 import { ref, watch } from 'vue';
 import { useEfetivoStore } from '@/store/efetivo';
-import FormEfetivo from './form.vue';
+import FormEfetivo from '../../pessoa/form.vue/index.js';
 
 const props = defineProps<{
     efetivos: Data.Efetivo[],
     efetivo?: Data.Efetivo | null,
     cargos: Data.Cargo[],
+    setores: Data.Setor[],
+    funcoes: Data.Funcao[],
     errors?: any | null
 }>()
 
@@ -49,15 +51,15 @@ watch(() => props.efetivo, (newEfetivo) => {
         </template>
         <Column field="pessoa.nome" header="Nome" sortable></Column>
         <Column field="pessoa.email" header="Email" sortable></Column>
-        <Column field="active" header="Ativo" sortable>
+        <Column field="ativo" header="Ativo" sortable>
             <template #body="slotProps">
-                <span v-if="slotProps.data.active" class="text-green-500 font-bold">Sim</span>
+                <span v-if="slotProps.data.ativo" class="text-green-500 font-bold">Sim</span>
                 <span v-else class="text-red-500 font-bold">Não</span>
             </template>
         </Column>
         <Column class="w-auto text-end!">
             <template #body="slotProps">
-                <Button v-if="slotProps.data.active" icon="pi pi-times" class="mr-2" severity="secondary"
+                <Button v-if="slotProps.data.ativo" icon="pi pi-times" class="mr-2" severity="secondary"
                     v-tooltip.top="'Desativar'" rounded @click="setStatus(slotProps.data.id, false)" />
                 <Button v-else icon="pi pi-check" class="mr-2" severity="secondary" v-tooltip.top="'Ativar'" rounded
                     @click="setStatus(slotProps.data.id, true)" />
@@ -66,5 +68,5 @@ watch(() => props.efetivo, (newEfetivo) => {
             </template>
         </Column>
     </DataTable>
-    <FormEfetivo :cargos="cargos" />
+    <FormEfetivo :cargos="cargos" :setores="setores" :funcoes="funcoes" />
 </template>

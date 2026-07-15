@@ -24,7 +24,7 @@ class SetorPostRequest extends FormRequest
     {
         return [
             'descricao' => ['string', 'max:255'],
-            'sigla' => ['string', 'max:255', 'nullable']
+            'abreviatura' => ['string', 'max:255', 'nullable']
         ];
     }
 }
