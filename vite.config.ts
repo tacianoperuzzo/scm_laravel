@@ -30,7 +30,6 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './resources/js'),
-            'pages': path.resolve(__dirname, './resources/js/pages'),
         },
     }
 });

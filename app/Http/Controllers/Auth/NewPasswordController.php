@@ -43,7 +43,7 @@ class NewPasswordController extends Controller
         ]);
 
         $user = $userRepository->findByCpfEmail($request->string('cpf'), $request->string('email'));
-        if (!$user || !$user->ativo) {
+        if (!$user || !$user->active) {
             throw ValidationException::withMessages([
                 'cpf' => trans('auth.failed'),
                 'email' => trans('auth.failed'),

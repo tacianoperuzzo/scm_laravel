@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Settings;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +23,7 @@ class UserStatusPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ativo' => ['required', 'integer', 'between:0,1']
+            'active' => ['required', 'integer', 'between:0,1']
         ];
     }
 }

@@ -3,13 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Repositories\Contracts\UserInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 
-class UserRepository implements UserInterface
+class UserRepository implements UserRepositoryInterface
 {
     public function getAll(): Collection
     {
@@ -23,18 +23,26 @@ class UserRepository implements UserInterface
 
     public function create(array $data): Model
     {
-        $userCreated = User::create([...$data, 'password' => Str::random()]);
+        $userCreated = User::create([...$data, 'password' => Str::random(), 'active'=>1]);
+        if ($userCreated) {
+            $userCreated->pessoa()->create([...$data['pessoa'], 'cpf' => $data['cpf'], 'email' => $data['email']]);
+        }
         return $userCreated;
     }
 
-    public function update(int $id, array $data): Model|bool
+    public function update(int $id, array $data): bool
     {
         $user = User::find($id);
-         if ($user) {
-            $user->update($data);
-            return $user;
+        $pessoa = $user->pessoa;
+         if (!$user) {
+            return false;
         }
-        return false;
+        if (!$pessoa) {
+            return false;
+        }
+        $user->update($data);
+        $pessoa->update([...$data['pessoa'], 'cpf' => $data['cpf'], 'email' => $data['email']]);
+        return true;
     }
 
     public function updateStatus(int $id, array $data): bool

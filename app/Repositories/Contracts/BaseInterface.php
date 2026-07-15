@@ -14,7 +14,7 @@ interface BaseInterface
 
     public function create(array $data): Model;
 
-    public function update(int $id, array $data): Model|bool;
+    public function update(int $id, array $data): bool;
 
     public function delete(int $id): bool;
 }

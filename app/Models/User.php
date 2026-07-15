@@ -24,8 +24,7 @@ class User extends Authenticatable
         'cpf',
         'email',
         'password',
-        'ativo',
-        'nivel_permissao_id',
+        'active',
     ];
 
     /**
@@ -58,10 +57,5 @@ class User extends Authenticatable
     public function pessoa(): HasOne
     {
         return $this->hasOne(Pessoa::class, 'cpf', 'cpf');
-    }
-
-    public function nivelPermissao(): HasOne
-    {
-        return $this->hasOne(NivelPermissao::class, 'id', 'nivel_permissao_id');
     }
 }

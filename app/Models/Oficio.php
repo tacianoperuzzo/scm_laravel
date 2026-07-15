@@ -21,7 +21,7 @@ class Oficio extends Model
 
     public static function generateNumber($ano)
     {
-        return self::where('ano', $ano)->max('numero') + 1;
+        return Oficio::where('ano', $ano)->max('numero') + 1;
     }
 
 }

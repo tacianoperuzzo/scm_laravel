@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pessoa;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,15 +16,10 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'cpf' => '00000000000',
+            'email' => 'test@example.com',
+            'cpf' => '12345678900',
             'password' => 'password',
-            'ativo' => 1,
-            'nivel' => 1
-        ]);
-        Pessoa::create([
-            'cpf' => '00000000000',
-            'nome' => 'Taciano Ricardo Maffei Peruzzo',
-            'email' => 'tperuzzo@yahoo.com.br',
+            'active' => 1,
         ]);
     }
 }

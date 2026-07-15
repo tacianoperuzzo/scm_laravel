@@ -8,7 +8,5 @@ Route::middleware('auth')->group(function () {
                 ->only(['index', 'store', 'update', 'destroy']);
     Route::prefix('user')->group(function () {
         Route::put('/{id}/status', [UserController::class, 'status'])->name('user.status');
-        Route::post('envia-email-boas-vindas/{id}', [UserController::class, 'enviaEmailBoasVindas'])->name('user.enviaEmailBoasVindas');
-        Route::post('envia-email-recuperacao-senha/{id}', [UserController::class, 'enviaEmailRecuperacaoSenha'])->name('user.enviaEmailRecuperacaoSenha');
     });
 });
