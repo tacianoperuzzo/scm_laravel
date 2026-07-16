@@ -10,6 +10,12 @@ use Inertia\Inertia;
 
 class RelatorioServicoController extends Controller
 {
+    protected RelatorioServicoRepository $repository;
+    public function __construct(RelatorioServicoRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index(
         RelatorioServicoRepository $relatorioServicoRepository,
         Request $request)
@@ -29,13 +35,13 @@ class RelatorioServicoController extends Controller
 
     public function store(RelatorioServicoPostRequest $request, RelatorioServicoRepository $relatorioServicoRepository)
     {
-        $relatorioServico = $relatorioServicoRepository->create($request->validated());
+        $relatorioServico = $this->repository->create($request->validated());
         return response()->redirectToRoute('relatorio-servico.index');
     }
 
-    public function update()
+    public function update(RelatorioServicoPostRequest $request, int $id)
     {
-        // Implement the logic to update an existing RelatorioServico
-
+        $relatorioServico = $this->repository->update($id, $request->validated());
+        return response()->redirectToRoute('relatorio-servico.index');
     }
 }

@@ -6,7 +6,9 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class RelatorioServicoPostRequest extends FormRequest
 {
@@ -25,12 +27,40 @@ class RelatorioServicoPostRequest extends FormRequest
      */
     public function rules(): array
     {
+        Log::alert($this->input());
+        $registroId = $this->input('id');
         return [
             'id' => 'nullable',
             'numero' => ['nullable','integer'],
             'mes_dia' => ['required', 'string', 'max:5'],
             'ano' => ['required', 'integer'],
-            'data_pre' => ['required', 'date'],
+            'data_pre' => ['required', 'date',
+                function ($attribute, $value, $fail) use ($registroId) {
+
+                    // 1. Transformamos a data recebida (ex: '2023-10-25') usando o Carbon
+                    $dataParseada = Carbon::parse($value);
+
+                    // 2. Extraímos os valores exatamente como estão no seu banco
+                    $mesDia = $dataParseada->format('m-d');
+                    $ano = $dataParseada->format('Y');
+
+                    // 3. Montamos a consulta
+                    $query = DB::table('relatorio_servico')
+                        ->where('mes_dia', $mesDia)
+                        ->where('ano', $ano);
+
+                    // Se for uma edição (update), ignoramos o registro atual
+                    if ($registroId) {
+                        $query->where('id', '!=', $registroId);
+                    }
+
+                    // 4. Verificamos se já existe
+                    if ($query->exists()) {
+                        // A função $fail amarra a mensagem de erro diretamente ao atributo atual ('data')
+                        $fail('Esta data já se encontra cadastrada no sistema.');
+                    }
+                },
+            ],
             'data_pos' => ['required', 'date'],
             'visto' => ['required', 'string'],
             'escalas' => ['required', 'string'],
@@ -71,4 +101,5 @@ class RelatorioServicoPostRequest extends FormRequest
             'updated_by' => Auth::user()->cpf ?? null,
         ]);
     }
+
 }
